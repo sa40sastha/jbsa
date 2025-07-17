@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sastha Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff;
+      color: #333;
+      padding-top: 60px; /* space for fixed header */
+      padding-bottom: 50px; /* space for fixed footer */
+    }
+
+    .header {
+      background-color: #e91e63;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      z-index: 1000;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: #ffe4ec;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.1);
+      text-decoration: none;
+      color: #e91e63;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      background-color: #f8d0e0;
+    }
+
+    .card i {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+      color: #e91e63;
+    }
+
+    .card span {
+      display: block;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .footer {
+      background-color: #e91e63;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      text-align: center;
+      padding: 12px 0;
+      font-size: 0.9rem;
+      color: white;
+      border-top: 1px solid #ddd;
+      z-index: 1000;
+    }
+
+    @media (max-width: 500px) {
+      .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed Header -->
+  <div class="header">JEWEL - BSA</div>
+
+  <!-- Dashboard Grid -->
+  <div class="dashboard">
+<a href="info.html" class="card">
+      <i class="fas fa-info-circle"></i>
+      <span>Software Info</span>
+    </a>
+    
+    <a href="purchase.html" class="card">
+      <i class="fas fa-cart-plus"></i>
+      <span>New Purchase</span>
+    </a>
+    
+    
+    
+    
+
+    <a href="stock_entry.html" class="card">
+      <i class="fas fa-boxes"></i>
+      <span>New Stock</span>
+    </a>
+
+    <a href="billing.html" class="card">
+      <i class="fas fa-file-invoice"></i>
+      <span>Billing</span>
+    </a>
+    
+    
+        <a href="dup_print.html" class="card">
+    <i class="fas fa-cart-plus"></i>
+      <span>Duplicate Print</span>
+    </a>
+
+    
+    
+  
+        <a href="purchase_view.html" class="card">
+      <i class="fas fa-shopping-bag"></i>
+      <span>Report Purchase</span>
+    </a>
+    
+    <a href="report.html" class="card">
+      <i class="fas fa-warehouse"></i>
+      <span>Report Stock</span>
+    </a>
+
+    <a href="sale_report.html" class="card">
+      <i class="fas fa-receipt"></i>
+      <span>Report Billing</span>
+    </a>
+
+
+
+    <a href="gstr1.html" class="card">
+      <i class="fas fa-file-alt"></i>
+      <span>GSTR-1</span>
+    </a>
+
+    <a href="GSTR3b.html" class="card">
+      <i class="fas fa-file-invoice-dollar"></i>
+      <span>GSTR-3B</span>
+    </a>
+
+    
+
+    <a href="load.html" class="card">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </a>
+
+  </div>
+
+  <!-- Fixed Footer -->
+  <div class="footer">
+    © Sastha Software | Call Now : (+91) 6383003056
+  </div>
+
+</body>
+</html>

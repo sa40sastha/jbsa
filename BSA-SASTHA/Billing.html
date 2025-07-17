@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sastha Software Jewellery Billing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fff0f5;
+      padding: 20px;
+      color: #4d0039;
+      margin: 0;
+    }
+    h2 { text-align: center; color: #cc0066; margin-bottom: 10px; }
+    #loadingMsg {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #cc0066;
+    }
+    .input-group, .customer-details, .totals, .print-btn { margin-bottom: 20px; }
+    .input-group, .customer-details { display: flex; flex-wrap: wrap; gap: 10px; }
+    .input-group input, .customer-details input, .totals input {
+      padding: 10px; font-size: 14px; border: 1px solid #cc6699;
+      border-radius: 5px; background: #fff0f5; color: #660033; flex: 1; min-width: 140px;
+    }
+    .input-group button {
+      padding: 10px 20px; background: #cc0066; color: white;
+      border: none; border-radius: 5px; cursor: pointer;
+    }
+    table {
+      width: 100%; border-collapse: collapse; background: white;
+    }
+    th, td {
+      padding: 8px; border: 1px solid #ffd6e8; text-align: center; font-size: 13px;
+    }
+    th { background: #ffcce0; color: #660033; }
+
+    .invoice-box {
+      max-width: 1000px; margin: 40px auto 20px; padding: 20px;
+      background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      color: #000;
+    }
+    .header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      border-bottom: 2px solid #ccc; padding-bottom: 10px; flex-wrap: wrap;
+    }
+    .header img { height: 50px; }
+    .shop-details {
+      flex-grow: 1; text-align: center; margin-left: -40px;
+    }
+    .summary {
+      margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: space-between;
+    }
+    .terms, .summary-box {
+      width: 100%; max-width: 49%; font-size: 14px;
+    }
+    .terms ul { padding-left: 18px; margin: 0; }
+    .summary-box div {
+      display: flex; justify-content: space-between; padding: 4px 0;
+    }
+    .footer {
+      margin-top: 30px; display: flex; justify-content: space-between;
+      font-size: 14px; border-top: 1px solid #ccc; padding-top: 10px;
+    }
+    .thank-you { text-align: center; margin-top: 10px; font-weight: bold; }
+    .print-btn {
+      padding: 10px 20px; font-size: 16px; background: #99004d;
+      color: white; border: none; border-radius: 5px; cursor: pointer;
+    }
+    @media print {
+      .no-print, .input-group, .customer-details, .totals { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<h2 class="no-print">💎 Jewellery Billing</h2><br>
+<div id="loadingMsg" class="no-print">⏳ Loading Product Details...</div><br>
+
+<div class="input-group no-print">
+  <input type="text" id="productID" placeholder="Enter Product ID">
+  <input type="number" id="rate" placeholder="Rate (₹/g)" value="6800">
+  <button onclick="addProduct()" disabled>Add Product</button>
+</div>
+
+<div class="customer-details no-print">
+  <input id="custName" placeholder="Customer Name">
+  <input id="custMobile" placeholder="Mobile No.">
+  <input id="custAddress" placeholder="Address">
+  <input id="custCity" placeholder="City">
+</div>
+
+<table id="productTable" class="no-print">
+  <thead>
+    <tr>
+      <th>S.No</th><th>Name</th><th>Metal</th><th>Gross</th><th>Wastage %</th><th>Net</th><th>Qty</th><th>Rate</th><th>MC</th><th>Extra</th><th>Total</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table><br>
+
+<div class="totals no-print">
+  <label>Discount (₹):</label>
+  <input id="discount" value="0" oninput="updateTotal()">
+</div>
+
+<div class="invoice-box" id="invoiceBox" style="display:none">
+  <div class="header">
+    <img src="1.png" alt="Logo">
+    <div class="shop-details">
+      <strong style="font-size: 20px;">Sastha Software</strong><br>
+      Madurai - 2
+    </div>
+  </div>
+
+  <div style="margin-top: 10px; width: 100%;">
+    <div style="display: flex; justify-content: space-between;">
+      <div><strong>Name:</strong> <span id="showName"></span></div>
+      <div><strong>City:</strong> <span id="showCity"></span></div>
+    </div>
+    <div style="display: flex; justify-content: space-between;">
+      <div><strong>Mobile:</strong> <span id="showMobile"></span></div>
+      <div><strong>Bill No:</strong> <span id="billNo"></span></div>
+    </div>
+    <div style="display: flex; justify-content: space-between;">
+      <div><strong>Address:</strong> <span id="showAddress"></span></div>
+      <div><strong>Date:</strong> <span id="billDate"></span></div>
+    </div>
+  </div>
+
+  <table style="margin-top:20px;">
+    <thead>
+      <tr>
+        <th>S.No</th><th>Name</th><th>Metal</th><th>Gross</th><th>Wastage %</th><th>Net</th><th>Qty</th><th>Rate</th><th>MC</th><th>Extra</th><th>Total</th>
+      </tr>
+    </thead>
+    <tbody id="invoiceItems"></tbody>
+  </table>
+
+  <div class="summary">
+    <div class="terms">
+      <strong>Terms & Conditions</strong>
+      <ul>
+        <li>Goods once sold will not be taken back or exchanged.</li>
+        <li>Payment must be made in full at time of purchase.</li>
+        <li>Guarantee applies only if mentioned on bill.</li>
+        <li>Disputes subject to Madurai jurisdiction.</li>
+      </ul>
+    </div>
+    <div class="summary-box">
+      <div><span>Subtotal:</span><span id="sumSubtotal"></span></div>
+      <div><span>GST (3%):</span><span id="sumGst"></span></div>
+      <div><span>Discount:</span><span id="sumDiscount"></span></div>
+      <div><strong>Grand Total:</strong><strong id="sumTotal"></strong></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>Customer Signature</div>
+    <div>Authorised Signature</div>
+  </div>
+
+  <div class="thank-you">Thanks For Purchasing Sastha Software</div>
+</div>
+
+<center class="no-print">
+  <button class="print-btn" id="saveBtn" onclick="saveAndShow()">Save & Print</button>
+  <div id="statusMsg" style="margin-top:10px; font-weight:bold;"></div>
+</center>
+
+<script>
+const searchURL = 'https://script.google.com/macros/s/AKfycbywhCmxK_Tz1_kgVAz0pzitOQsx3tvQhFwB5le_bWOaWocsvNTh6iLSpe9GvaLsW0QsoQ/exec';
+const saveURL = 'https://script.google.com/macros/s/AKfycbx0gl3wmwjrXfS5MR1S8Ct87wGQ5UEF4ulpczoe0cFFjXoe-sVro5BJSNCS4Gefc6m64Q/exec';
+
+let data = [], products = [];
+const addBtn = document.querySelector('.input-group button');
+const loadingMsg = document.getElementById('loadingMsg');
+
+addBtn.disabled = true;
+fetch(searchURL + '?action=read')
+  .then(res => res.json())
+  .then(json => {
+    data = json;
+    addBtn.disabled = false;
+    loadingMsg.style.display = 'none';
+  })
+  .catch(() => {
+    loadingMsg.innerText = "❌ Failed to load product data.";
+  });
+
+function formatINR(n) {
+  return '₹' + (+n).toLocaleString('en-IN', {minimumFractionDigits:2});
+}
+
+function addProduct() {
+  const id = document.getElementById('productID').value.trim().toLowerCase();
+  const rate = parseFloat(document.getElementById('rate').value);
+  const p = data.find(d => d.ID.toLowerCase() === id);
+  if (!p || !rate) return alert("Enter valid Product ID and Rate");
+
+  const product = {
+    name: p.product_name || '', metal: p.metal_type || '',
+    gross: +p.gross_wt || 0, wastage_pct: +p.wastage_percentage || 0,
+    net: +p.net_wt || 0, qty: +p.qty || 1, hsn: p.hsn_code || '',
+    huid: p.huid_code || '', rate: rate,
+    mc: +p.labour_amt || 0, ex: +p.extra_charges || 0,
+  };
+  product.total = (product.net * product.rate) + product.mc + product.ex;
+  products.push(product);
+  renderTable(); updateTotal();
+}
+
+function renderTable() {
+  const tbody = document.querySelector('#productTable tbody');
+  tbody.innerHTML = '';
+  products.forEach((p, i) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${i+1}</td><td>${p.name}</td><td>${p.metal}</td><td>${p.gross}</td><td>${p.wastage_pct}%</td>
+        <td>${p.net}</td><td>${p.qty}</td><td>${formatINR(p.rate)}</td><td>${formatINR(p.mc)}</td><td>${formatINR(p.ex)}</td><td>${formatINR(p.total)}</td>
+      </tr>
+      <tr>
+        <td colspan="11" style="text-align:left; font-size:12px;"><b>HSN:</b> ${p.hsn} &nbsp;&nbsp; <b>HUID:</b> ${p.huid}</td>
+      </tr>`;
+  });
+}
+
+function updateTotal() {
+  const discount = +document.getElementById('discount').value;
+  const subtotal = products.reduce((sum, p) => sum + p.total, 0);
+  const gst = subtotal * 0.03;
+  const total = subtotal + gst - discount;
+  document.getElementById('sumSubtotal').innerText = formatINR(subtotal);
+  document.getElementById('sumGst').innerText = formatINR(gst);
+  document.getElementById('sumDiscount').innerText = formatINR(discount);
+  document.getElementById('sumTotal').innerText = formatINR(total);
+}
+
+function saveAndShow() {
+  const name = document.getElementById('custName').value.trim();
+  const mob = document.getElementById('custMobile').value.trim();
+  const add = document.getElementById('custAddress').value.trim();
+  const city = document.getElementById('custCity').value.trim();
+  const saveBtn = document.getElementById('saveBtn');
+  const statusMsg = document.getElementById('statusMsg');
+
+  if (!name || !mob || products.length === 0) {
+    alert("Please enter customer details and add at least one product.");
+    return;
+  }
+
+  const now = new Date();
+  const date = now.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+  const time = now.toLocaleTimeString('en-IN', {hour: '2-digit', minute: '2-digit'});
+
+  const invoiceData = {
+    name, mob, add, city, date, time,
+    discount: document.getElementById('discount').value,
+    products
+  };
+
+  saveBtn.disabled = true;
+  statusMsg.innerText = "⏳ Please wait... Saving Invoice";
+
+  fetch(saveURL, {
+    method: 'POST',
+    body: new URLSearchParams({
+      action: 'saveInvoice',
+      data: JSON.stringify(invoiceData)
+    })
+  })
+  .then(res => res.text())
+  .then(response => {
+    let resJson;
+    try { resJson = JSON.parse(response); }
+    catch (e) {
+      statusMsg.innerText = "❌ Error saving invoice.";
+      saveBtn.disabled = false;
+      return;
+    }
+
+    if (resJson.status !== "Success") {
+      statusMsg.innerText = "❌ Failed to Save Invoice: " + (resJson.message || "Unknown error");
+      saveBtn.disabled = false;
+      return;
+    }
+
+    const billNo = resJson.billNo;
+
+    document.getElementById('showName').innerText = name;
+    document.getElementById('showMobile').innerText = mob;
+    document.getElementById('showAddress').innerText = add;
+    document.getElementById('showCity').innerText = city;
+    document.getElementById('billNo').innerText = billNo;
+    document.getElementById('billDate').innerText = `${date} | ${time}`;
+
+    const tbody = document.getElementById('invoiceItems');
+    tbody.innerHTML = '';
+    products.forEach((p, i) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${i + 1}</td><td>${p.name}</td><td>${p.metal}</td><td>${p.gross}</td><td>${p.wastage_pct}%</td>
+          <td>${p.net}</td><td>${p.qty}</td><td>${formatINR(p.rate)}</td><td>${formatINR(p.mc)}</td><td>${formatINR(p.ex)}</td><td>${formatINR(p.total)}</td>
+        </tr>
+        <tr>
+          <td colspan="11" style="text-align:left; font-size:12px;"><b>HSN:</b> ${p.hsn} &nbsp;&nbsp; <b>HUID:</b> ${p.huid}</td>
+        </tr>`;
+    });
+
+    document.getElementById('invoiceBox').style.display = 'block';
+    updateTotal();
+    statusMsg.innerText = "✅ Invoice Saved Successfully";
+    saveBtn.disabled = false;
+    window.print();
+  })
+  .catch(err => {
+    statusMsg.innerText = "❌ Error saving invoice.";
+    saveBtn.disabled = false;
+  });
+}
+</script>
+
+</body>
+</html>
